@@ -266,3 +266,7 @@ html, body {
 .original-words .word[data-morph] {
   border-bottom: 1px dotted var(--accent);
 }
+
+/* Strong's inline tooltip */
+#strongs-tooltip { position: absolute; background: #0f172a; color: #e2e8f0; border: 1px solid #334155; border-radius: 8px; padding: 10px; font-size: 14px; max-width: 260px; z-index: 50; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+.original-words .word[data-strongs] { border-bottom: 1px dashed #475569; }
