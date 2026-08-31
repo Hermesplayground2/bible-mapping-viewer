@@ -1,0 +1,268 @@
+/* Bible Study App — single-file app shell styles */
+
+:root {
+  --bg: #0b0f12;
+  --panel: #10161c;
+  --border: #2a2f36;
+  --text: #e7e9ea;
+  --muted: #9aa3ad;
+  --accent: #8ab4f8;
+  --success: #7ee787;
+  --warn: #f5c842;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+.app-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #0f1418, var(--bg));
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.app-main {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 900px) {
+  .app-main { padding: 20px; }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.panel h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: var(--accent);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.controls select,
+.controls input,
+.controls button {
+  background: #0d1217;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.controls input { min-width: 200px; }
+.controls button.primary { border-color: #3a6; color: var(--success); }
+.controls button.icon-btn { padding: 8px 10px; }
+
+.reader-content {
+  line-height: 1.55;
+  font-size: 15px;
+}
+
+.reader-content .verse-block {
+  margin: 10px 0;
+  padding: 10px;
+  border-left: 3px solid var(--border);
+  background: #0d1217;
+  border-radius: 0 8px 8px 0;
+}
+
+.reader-content .verse-label {
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 6px;
+}
+
+.reader-content .translation-title {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.empty { color: var(--muted); font-style: italic; }
+.loading { color: var(--muted); font-style: italic; }
+.warn { color: var(--warn); }
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.tab {
+  background: #0d1217;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tab.active {
+  color: var(--text);
+  border-color: #3a6;
+  background: #12211a;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.verse-nav {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.actions-panel .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.meta { color: var(--muted); font-size: 12px; }
+
+.app-footer {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.source {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #141b22;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--accent);
+  margin: 2px;
+}
+
+.pill.ok { border-color: #4a6; color: var(--success); }
+.pill.warn { border-color: #b88a14; color: var(--warn); }
+
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+
+.card {
+  background: #0d1217;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  margin: 8px 0;
+}
+
+.card .strongs { font-weight: 700; color: var(--accent); }
+.card .lemma { font-style: italic; margin: 4px 0; }
+.card .def { margin: 6px 0; }
+.card .verses div { margin: 4px 0; font-size: 13px; color: #cdd3da; background:#10161c; padding:6px 8px; border-radius:6px; }
+.card .meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.s-word {
+  display: inline-block;
+  padding: 2px 4px;
+  margin: 2px 2px 0 0;
+  border-radius: 4px;
+  background: #141b22;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+}
+
+.s-word .tip {
+  visibility: hidden;
+  background: #141b22;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px;
+  border-radius: 8px;
+  position: absolute;
+  z-index: 2;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  font-size: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  line-height: 1.45;
+}
+
+.s-word:hover .tip,
+.s-word.show .tip { visibility: visible; }
+
+.s-word.mapped { border-color: #4a6; background: #12211a; }
+.s-word.direct { border-color: #4a6; background: #12211a; }
+.s-word.dynamic { border-color: #d97706; background: #211f12; }
+
+/* Original text enhancements */
+.original-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.original-controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.original-words {
+  margin-top: 10px;
+  line-height: 1.8;
+}
+
+.original-words .word {
+  display: inline-block;
+  padding: 2px 4px;
+  margin: 0 2px;
+  border-radius: 4px;
+  cursor: default;
+}
+
+.original-words .word[data-morph] {
+  border-bottom: 1px dotted var(--accent);
+}
