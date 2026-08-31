@@ -365,6 +365,7 @@
         if (hasTransliteration) {
           controlsHtml += `<label><input type="checkbox" id="transToggle" checked> Show transliteration</label>`;
         }
+        controlsHtml += `<button id="originalExportBtn" style="margin-left:auto;background:#334155;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">Export CSV</button>`;
         controlsHtml += '</div>';
       }
       
@@ -373,7 +374,8 @@
         wordsHtml = '<div class="original-words">';
         words.forEach((w, i) => {
           const morphAttr = (w.morphology && transliterationEnabled) ? ` data-morph="${w.morphology}"` : '';
-          wordsHtml += `<span class="word"${morphAttr}>${w.surface || ''}</span> `;
+          const strongsAttr = w.strongs_id ? ` data-strongs="${w.strongs_id}"` : '';
+          wordsHtml += `<span class="word"${strongsAttr}${morphAttr}>${w.surface || ''}</span> `;
         });
         wordsHtml += '</div>';
       }
@@ -411,7 +413,86 @@
           span.title = span.dataset.morph;
         });
       }
-      
+
+      // Inline Strong's lookup
+      const hideStrongsTooltip = () => {
+        const tooltip = panel.querySelector('#strongs-tooltip');
+        if (tooltip) tooltip.style.display = 'none';
+      };
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.word[data-strongs]') && !e.target.closest('#strongs-tooltip')) {
+          hideStrongsTooltip();
+        }
+      });
+      panel.querySelectorAll('.word[data-strongs]').forEach(span => {
+        span.style.cursor = 'pointer';
+        span.addEventListener('click', async (e) => {
+          const id = span.dataset.strongs;
+          let tooltip = panel.querySelector('#strongs-tooltip');
+          if (!tooltip) {
+            tooltip = document.createElement('div');
+            tooltip.id = 'strongs-tooltip';
+            tooltip.setAttribute('style', 'position:absolute;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:8px;padding:10px;font-size:14px;max-width:260px;z-index:50;box-shadow:0 10px 25px rgba(0,0,0,0.4);display:none;');
+            panel.style.position = 'relative';
+            panel.appendChild(tooltip);
+          }
+          tooltip.innerHTML = '<em>Loading...</em>';
+          tooltip.style.display = 'block';
+          const rect = span.getBoundingClientRect();
+          const panelRect = panel.getBoundingClientRect();
+          tooltip.style.left = (rect.left - panelRect.left) + 'px';
+          tooltip.style.top = (rect.bottom - panelRect.top + 6) + 'px';
+          try {
+            const res = await fetch('/strongs/' + encodeURIComponent(id));
+            const data = await res.json();
+            if (data.lemma || data.definition) {
+              tooltip.innerHTML = `<strong>${data.strongs_id || id}</strong> · ${data.language || ''}<br><em>${data.lemma || ''}</em><br>${data.definition || ''}`;
+            } else {
+              tooltip.innerHTML = '<em>No definition found</em>';
+            }
+          } catch (err) {
+            tooltip.innerHTML = '<em>Lookup failed</em>';
+          }
+        });
+      });
+
+      // CSV export for original text word data
+      const exportBtn = panel.querySelector('#originalExportBtn');
+      if (exportBtn && words.length) {
+        exportBtn.addEventListener('click', () => {
+          const rows = [['position', 'surface', 'strongs_id', 'morphology', 'lemma', 'definition']];
+          words.forEach(w => {
+            rows.push([
+              w.position || '',
+              (w.surface || '').replace(/,/g, ';'),
+              w.strongs_id || '',
+              (w.morphology || '').replace(/,/g, ';'),
+              (w.lemma || '').replace(/,/g, ';'),
+              (w.definition || '').replace(/,/g, ';'),
+            ]);
+          });
+          const csv = rows.map(r => r.join(',')).join(String.fromCharCode(10));
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          if (typeof URL !== 'undefined' && URL.createObjectURL) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'original_text_words.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          } else {
+            const a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            a.download = 'original_text_words.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        });
+      }
+
     } catch (e) {
       panel.className = 'warn';
       panel.textContent = `Original text failed: ${e.message}`;
